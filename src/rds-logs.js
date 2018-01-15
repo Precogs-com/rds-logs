@@ -59,7 +59,7 @@ const downloadCompleteLogFile = (folderPath, instanceId, filename) => {
       });
     });
     req.end();
-    req.on('err', err => reject(err));
+    req.on('err', reject);
   });
 };
 
@@ -84,31 +84,48 @@ const listLogs = (instanceId) => {
  *
  * @param  {String}   folderPath  Path to logs folder
  * @param  {String}   instanceId  RDS instance id
- * @param  {Object}   wlog      Logger. Should contain at least <debug> and <info> level
+ * @param  {Object}   plog        Logger. Should contain at least <debug> and <info> level
  * @return {String[]}             List of all logs files location
  */
-const getLogs = (folderPath, instanceId, wlog) => new Promise((resolve, reject) => {
+const getLogs = (folderPath, instanceId, plog) => new Promise((resolve, reject) => {
   try {
-    if (wlog && typeof wlog.debug === 'function' && typeof wlog.info === 'function') {
-      logger = wlog;
+    if (plog &&
+      typeof plog.debug === 'function' &&
+      typeof plog.info === 'function' &&
+      typeof plog.error === 'function') {
+      logger = plog;
     } else {
       logger = winston;
     }
 
+    if (typeof folderPath === 'undefined') {
+      throw new Error('Folder path is not defined\n');
+    }
+
+    if (typeof instanceId === 'undefined') {
+      throw new Error('Instance ID is not defined\n');
+    }
+
     logger.debug(`Create <${folderPath}> if nos exist`);
     fs.ensureDirSync(folderPath);
-
     rds = new AWS.RDS({ apiVersion: '2014-10-31' });
 
     listLogs(instanceId)
       // Using mapSeries to avoid concurrency.
       // I don't really know why, but when all requests are made at the time (eg Promise.all)
       // some data in files are not retrieve.
-      .then(logs => Promise.mapSeries(logs, log =>
-        downloadCompleteLogFile(folderPath, instanceId, log.LogFileName)))
+      .then(logs => Promise.mapSeries(logs, (log) => {
+        const filename = log.LogFileName;
+        return downloadCompleteLogFile(folderPath, instanceId, filename)
+          .catch(err => logger.error(`Cannot retrieve file <${filename}>.\nerror:${err}\n`));
+      }))
       .then(resolve)
-      .catch(reject);
+      .catch((err) => {
+        logger.error(`Cannot retrieve logs on instance <${instanceId}>`);
+        reject(err);
+      });
   } catch (err) {
+    logger.error(`Failed to retrieve logs.\nerror: ${err}`);
     reject(err);
   }
 });

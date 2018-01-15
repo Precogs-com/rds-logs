@@ -4,7 +4,7 @@ const program = require('commander');
 const AWS = require('aws-sdk');
 const winston = require('winston');
 
-const rdsLog = require('./rds-log.js');
+const rdsLog = require('../src/rds-logs.js');
 
 let folderPath;
 
