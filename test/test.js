@@ -1,9 +1,11 @@
+'use strict';
+
 const sinon = require('sinon');
 const proxyquire = require('proxyquire').noCallThru();
 const https = require('https');
 
-const { PassThrough } = require('stream');
-const { expect } = require('chai');
+const stream = require('stream');
+const chai = require('chai');
 
 describe('rds-logs', () => {
   let rdsLogWithStubs;
@@ -84,10 +86,10 @@ describe('rds-logs', () => {
         done(`Should not success.\ndata: ${res}`);
       })
       .catch((err) => {
-        expect(stubWinston.debug.callCount).to.equal(0);
-        expect(stubWinston.info.callCount).to.equal(0);
-        expect(stubWinston.error.callCount).to.equal(1);
-        expect(err.message).to.equal('Folder path is not defined\n');
+        chai.expect(stubWinston.debug.callCount).to.equal(0);
+        chai.expect(stubWinston.info.callCount).to.equal(0);
+        chai.expect(stubWinston.error.callCount).to.equal(1);
+        chai.expect(err.message).to.equal('Folder path is not defined\n');
         done();
       });
   });
@@ -98,10 +100,10 @@ describe('rds-logs', () => {
         done(`Should not success.\ndata: ${res}`);
       })
       .catch((err) => {
-        expect(stubWinston.debug.callCount).to.equal(0);
-        expect(stubWinston.info.callCount).to.equal(0);
-        expect(stubWinston.error.callCount).to.equal(1);
-        expect(err.message).to.equal('Instance ID is not defined\n');
+        chai.expect(stubWinston.debug.callCount).to.equal(0);
+        chai.expect(stubWinston.info.callCount).to.equal(0);
+        chai.expect(stubWinston.error.callCount).to.equal(1);
+        chai.expect(err.message).to.equal('Instance ID is not defined\n');
         done();
       });
   });
@@ -112,10 +114,10 @@ describe('rds-logs', () => {
         done(`Should not success.\ndata: ${res}`);
       })
       .catch((err) => {
-        expect(stubWinston.debug.callCount).to.equal(0);
-        expect(stubWinston.info.callCount).to.equal(0);
-        expect(stubWinston.error.callCount).to.equal(1);
-        expect(err.message).to.equal('Folder path is not defined\n');
+        chai.expect(stubWinston.debug.callCount).to.equal(0);
+        chai.expect(stubWinston.info.callCount).to.equal(0);
+        chai.expect(stubWinston.error.callCount).to.equal(1);
+        chai.expect(err.message).to.equal('Folder path is not defined\n');
         done();
       });
   });
@@ -129,12 +131,12 @@ describe('rds-logs', () => {
       })
       .catch((err) => {
         try {
-          expect(stubWinston.debug.callCount).to.equal(1);
-          expect(stubWinston.info.callCount).to.equal(0);
-          expect(stubWinston.error.callCount).to.equal(1);
-          expect(stubFs.ensureDirSync.callCount).to.equal(1);
-          expect(stubFs.ensureDirSync.firstCall.args[0]).to.equal(folderPath);
-          expect(err.message).to.equal('Oh no ensureDirSync!');
+          chai.expect(stubWinston.debug.callCount).to.equal(1);
+          chai.expect(stubWinston.info.callCount).to.equal(0);
+          chai.expect(stubWinston.error.callCount).to.equal(1);
+          chai.expect(stubFs.ensureDirSync.callCount).to.equal(1);
+          chai.expect(stubFs.ensureDirSync.firstCall.args[0]).to.equal(folderPath);
+          chai.expect(err.message).to.equal('Oh no ensureDirSync!');
           done();
         } catch (e) {
           done(e);
@@ -152,15 +154,15 @@ describe('rds-logs', () => {
       })
       .catch((err) => {
         try {
-          expect(stubWinston.debug.callCount).to.equal(2);
-          expect(stubWinston.info.callCount).to.equal(0);
-          expect(stubWinston.error.callCount).to.equal(1);
-          expect(stubFs.ensureDirSync.firstCall.args[0]).to.equal(folderPath);
-          expect(stubDescribeDBLogFiles.callCount).to.equal(1);
-          expect(stubPromiseDescribeDBLogFiles.callCount).to.equal(1);
-          expect(stubPromiseDescribeDBLogFiles.firstCall.args[0])
+          chai.expect(stubWinston.debug.callCount).to.equal(2);
+          chai.expect(stubWinston.info.callCount).to.equal(0);
+          chai.expect(stubWinston.error.callCount).to.equal(1);
+          chai.expect(stubFs.ensureDirSync.firstCall.args[0]).to.equal(folderPath);
+          chai.expect(stubDescribeDBLogFiles.callCount).to.equal(1);
+          chai.expect(stubPromiseDescribeDBLogFiles.callCount).to.equal(1);
+          chai.expect(stubPromiseDescribeDBLogFiles.firstCall.args[0])
             .to.deep.equal({ DBInstanceIdentifier: instanceId });
-          expect(err.message).to.equal('Oh no stubDescribeDBLogFiles!');
+          chai.expect(err.message).to.equal('Oh no stubDescribeDBLogFiles!');
           done();
         } catch (e) {
           done(e);
@@ -176,11 +178,11 @@ describe('rds-logs', () => {
 
     rdsLogWithStubs.getLogs(folderPath, instanceId)
       .then(() => {
-        expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal({});
-        expect(stubWinston.debug.callCount).to.equal(2);
-        expect(stubWinston.error.callCount).to.equal(1);
-        expect(stubWinston.info.callCount).to.equal(0);
-        expect(stubWinston.error.firstCall.args[0]).to.equal('Cannot retrieve file <error/postgresql.log.2018-01-12-12>.\nerror:Error: Oh no stubHttpsRequest!\n');
+        chai.expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal({});
+        chai.expect(stubWinston.debug.callCount).to.equal(2);
+        chai.expect(stubWinston.error.callCount).to.equal(1);
+        chai.expect(stubWinston.info.callCount).to.equal(0);
+        chai.expect(stubWinston.error.firstCall.args[0]).to.equal('Cannot retrieve file <error/postgresql.log.2018-01-12-12>.\nerror:Error: Oh no stubHttpsRequest!\n');
         done();
       })
       .catch(done);
@@ -205,21 +207,21 @@ describe('rds-logs', () => {
     stubAws4.sign.returns(opts);
 
     const expected = { pre: 'cogs' };
-    const response = new PassThrough();
+    const response = new stream.PassThrough();
     response.write(JSON.stringify(expected));
     response.statusCode = 403;
     response.end();
-    const request = new PassThrough();
+    const request = new stream.PassThrough();
 
     stubHttpsRequest.yields(response).returns(request);
 
     rdsLogWithStubs.getLogs(folderPath, instanceId)
       .then(() => {
-        expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
-        expect(stubWinston.debug.callCount).to.equal(3);
-        expect(stubWinston.error.callCount).to.equal(1);
-        expect(stubWinston.info.callCount).to.equal(0);
-        expect(stubWinston.error.firstCall.args[0]).to.equal('Cannot retrieve file <error/postgresql.log.2018-01-12-12>.\nerror:Error: {"pre":"cogs"}\n');
+        chai.expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
+        chai.expect(stubWinston.debug.callCount).to.equal(3);
+        chai.expect(stubWinston.error.callCount).to.equal(1);
+        chai.expect(stubWinston.info.callCount).to.equal(0);
+        chai.expect(stubWinston.error.firstCall.args[0]).to.equal('Cannot retrieve file <error/postgresql.log.2018-01-12-12>.\nerror:Error: {"pre":"cogs"}\n');
         done();
       })
       .catch(done);
@@ -246,23 +248,23 @@ describe('rds-logs', () => {
     stubAws4.sign.returns(opts);
 
     const expected = { pre: 'cogs' };
-    const response = new PassThrough();
+    const response = new stream.PassThrough();
     response.write(JSON.stringify(expected));
     response.statusCode = 200;
     response.end();
-    const request = new PassThrough();
+    const request = new stream.PassThrough();
 
     stubHttpsRequest.yields(response).returns(request);
 
     rdsLogWithStubs.getLogs(folderPath, instanceId)
       .then(() => {
-        expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
-        expect(stubWinston.debug.callCount).to.equal(4);
-        expect(stubWinston.error.callCount).to.equal(1);
-        expect(stubWinston.info.callCount).to.equal(0);
-        expect(stubFs.ensureFileSync.callCount).to.equal(1);
-        expect(stubFs.ensureFileSync.firstCall.args[0]).to.match(/\w*postgresql\.log\.2018-01-12-12\.log\b/);
-        expect(stubWinston.error.firstCall.args[0]).to.equal('Cannot retrieve file <error/postgresql.log.2018-01-12-12>.\nerror:Error: Oh no ensureFileSync!\n');
+        chai.expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
+        chai.expect(stubWinston.debug.callCount).to.equal(4);
+        chai.expect(stubWinston.error.callCount).to.equal(1);
+        chai.expect(stubWinston.info.callCount).to.equal(0);
+        chai.expect(stubFs.ensureFileSync.callCount).to.equal(1);
+        chai.expect(stubFs.ensureFileSync.firstCall.args[0]).to.match(/\w*postgresql\.log\.2018-01-12-12\.log\b/);
+        chai.expect(stubWinston.error.firstCall.args[0]).to.equal('Cannot retrieve file <error/postgresql.log.2018-01-12-12>.\nerror:Error: Oh no ensureFileSync!\n');
         done();
       })
       .catch(done);
@@ -289,24 +291,24 @@ describe('rds-logs', () => {
     stubAws4.sign.returns(opts);
 
     const expected = 'precogs';
-    const response = new PassThrough();
+    const response = new stream.PassThrough();
     response.write(JSON.stringify(expected));
     response.statusCode = 200;
     response.end();
-    const request = new PassThrough();
+    const request = new stream.PassThrough();
 
     stubHttpsRequest.yields(response).returns(request);
 
     rdsLogWithStubs.getLogs(folderPath, instanceId)
       .then(() => {
-        expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
-        expect(stubWinston.debug.callCount).to.equal(4);
-        expect(stubWinston.error.callCount).to.equal(1);
-        expect(stubWinston.info.callCount).to.equal(0);
-        expect(stubFs.writeFileSync.callCount).to.equal(1);
-        expect(stubFs.writeFileSync.firstCall.args[0]).to.match(/\w*postgresql\.log\.2018-01-12-12\.log\b/);
-        expect(stubFs.writeFileSync.firstCall.args[1]).to.equal('"precogs"');
-        expect(stubWinston.error.firstCall.args[0]).to.equal('Cannot retrieve file <error/postgresql.log.2018-01-12-12>.\nerror:Error: Oh no writeFileSync!\n');
+        chai.expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
+        chai.expect(stubWinston.debug.callCount).to.equal(4);
+        chai.expect(stubWinston.error.callCount).to.equal(1);
+        chai.expect(stubWinston.info.callCount).to.equal(0);
+        chai.expect(stubFs.writeFileSync.callCount).to.equal(1);
+        chai.expect(stubFs.writeFileSync.firstCall.args[0]).to.match(/\w*postgresql\.log\.2018-01-12-12\.log\b/);
+        chai.expect(stubFs.writeFileSync.firstCall.args[1]).to.equal('"precogs"');
+        chai.expect(stubWinston.error.firstCall.args[0]).to.equal('Cannot retrieve file <error/postgresql.log.2018-01-12-12>.\nerror:Error: Oh no writeFileSync!\n');
         done();
       })
       .catch(done);
@@ -331,21 +333,21 @@ describe('rds-logs', () => {
     stubAws4.sign.returns(opts);
 
     const expected = 'precogs';
-    const response = new PassThrough();
+    const response = new stream.PassThrough();
     response.write(JSON.stringify(expected));
     response.statusCode = 200;
     response.end();
-    const request = new PassThrough();
+    const request = new stream.PassThrough();
 
     stubHttpsRequest.yields(response).returns(request);
 
     rdsLogWithStubs.getLogs(folderPath, instanceId, stubWinston)
       .then((res) => {
-        expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
-        expect(stubWinston.debug.callCount).to.equal(4);
-        expect(stubWinston.error.callCount).to.equal(0);
-        expect(stubWinston.info.callCount).to.equal(1);
-        expect(res[0]).to.match(/\w*postgresql\.log\.2018-01-12-12\.log\b/);
+        chai.expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
+        chai.expect(stubWinston.debug.callCount).to.equal(4);
+        chai.expect(stubWinston.error.callCount).to.equal(0);
+        chai.expect(stubWinston.info.callCount).to.equal(1);
+        chai.expect(res[0]).to.match(/\w*postgresql\.log\.2018-01-12-12\.log\b/);
         done();
       })
       .catch(done);
@@ -370,21 +372,21 @@ describe('rds-logs', () => {
     stubAws4.sign.returns(opts);
 
     const expected = 'precogs';
-    const response = new PassThrough();
+    const response = new stream.PassThrough();
     response.write(JSON.stringify(expected));
     response.statusCode = 200;
     response.end();
-    const request = new PassThrough();
+    const request = new stream.PassThrough();
 
     stubHttpsRequest.yields(response).returns(request);
 
     rdsLogWithStubs.getLogs(folderPath, instanceId)
       .then((res) => {
-        expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
-        expect(stubWinston.debug.callCount).to.equal(4);
-        expect(stubWinston.error.callCount).to.equal(0);
-        expect(stubWinston.info.callCount).to.equal(1);
-        expect(res[0]).to.match(/\w*postgresql\.log\.2018-01-12-12\.log\b/);
+        chai.expect(stubHttpsRequest.firstCall.args[0]).to.deep.equal(opts);
+        chai.expect(stubWinston.debug.callCount).to.equal(4);
+        chai.expect(stubWinston.error.callCount).to.equal(0);
+        chai.expect(stubWinston.info.callCount).to.equal(1);
+        chai.expect(res[0]).to.match(/\w*postgresql\.log\.2018-01-12-12\.log\b/);
         done();
       })
       .catch(done);
