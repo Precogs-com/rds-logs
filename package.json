@@ -49,5 +49,5 @@
     "lint": "node node_modules/eslint/bin/eslint.js bin/*.js src/*.js && node node_modules/eslint/bin/eslint.js --env mocha test/*.js",
     "test": "node node_modules/mocha/bin/mocha test/"
   },
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
