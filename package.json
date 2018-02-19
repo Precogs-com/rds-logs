@@ -11,6 +11,15 @@
     "fs-extra": "^5.0.0",
     "winston": "^2.4.0"
   },
+  "homepage": "https://github.com/Precogs-com/rds-logs",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Precogs-com/rds-logs"
+  },
+  "bugs": {
+    "url": "https://github.com/Precogs-com/rds-logs/issues",
+    "mail": ""
+  },
   "description": "Download all AWS RDS logs files for a specific instance",
   "devDependencies": {
     "chai": "^4.1.2",
